@@ -31,7 +31,7 @@ void ABaseHarvestPlot::Tick(float DeltaTime)
 void ABaseHarvestPlot::GeneratePlot()
 {
 	//Check if an Actor has been selected in the editor, if nullptr return early and log message
-	if (ActorToSpawn == nullptr)
+	if (!ActorToSpawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Actor To Spawn is Empty!"));
 		return;
@@ -57,9 +57,9 @@ void ABaseHarvestPlot::GeneratePlot()
 			FVector ActorToSpawnLocation;
 			FRotator ActorToSpawnRotation;
 			GetSpawnLocationForPlant(i, j, ActorToSpawnLocation);
-			ASoil* NewSoil = GetWorld()->SpawnActor<ASoil>(ActorToSpawn->GetClass(), ActorToSpawnLocation, ActorToSpawnRotation);
+			ASoil* NewSoil = GetWorld()->SpawnActor<ASoil>(ActorToSpawn, ActorToSpawnLocation, ActorToSpawnRotation);
 
-			//Attach the newly spawned Actors to the Plot Actor and keep its World Transform (
+			//Attach the newly spawned Actors to the Plot Actor and keep its World Transform
 			NewSoil->AttachToActor(ParentActor, FAttachmentTransformRules::KeepWorldTransform);
 			SoilInPlot.Add(NewSoil);
 		}

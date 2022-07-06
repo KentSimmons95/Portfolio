@@ -49,8 +49,8 @@ void APlantBase::BeginPlay()
 void APlantBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 	StartGrowingPlant();
+
 	UE_LOG(LogTemp, Warning, TEXT("Is Plant fully grown? %s"), (bIsPlantFullyGrown ? TEXT("True") : TEXT("False")));
 	UE_LOG(LogTemp, Warning, TEXT("Remaining time for plant to grow: %f"), RemainingTimeToGrow);
 }

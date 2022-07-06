@@ -47,7 +47,6 @@ public:
 	bool bHasPlantInSoil = false;
 
 private:
-	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* Mesh;
 
 	float CurrentPlantWaterRequirement = 0;
@@ -55,20 +54,20 @@ private:
 	float CurrentPlantUpKeepCost = 0;
 
 	//The type of Plant we want to Spawn - TODO: Called on UI input
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	APlantBase* ActorToSpawn;
-	//TSubclassOf<APlantBase> ActorToSpawn;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<APlantBase> ActorToSpawn;
+	
 
 	UPROPERTY(VisibleAnywhere, Category = "Soil Properties")
 	APlantBase* CurrentPlantInSoil;
 
 	AActor* ParentActor = this;
 
-	UPROPERTY(EditAnywhere, Category = "Soil Properties")
+	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
 	float WaterLevels;
-	UPROPERTY(EditAnywhere, Category = "Soil Properties")
+	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
 	float FertilizerLevels;
-	UPROPERTY(EditAnywhere, Category = "Soil Properties")
+	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
 	float SoilQuality;
 
 	//Function that will begin growing a new Plant, needs to check if enough resources are available to start growing
@@ -76,9 +75,4 @@ private:
 	void SpawnPlantToGrow();
 	UFUNCTION()
 	void DestroyPlant();
-
-
-	//Functions to Get the the current state of the plants growing
-	
-
 };

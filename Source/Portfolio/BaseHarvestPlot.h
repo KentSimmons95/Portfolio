@@ -35,20 +35,20 @@ private:
 	float TempTickRate = 1.0;
 
 	//Size properties of how large the plot will be (number of plots that will be ceated is Height * Width)
-	UPROPERTY(EditAnywhere, Category = "Plot Size")
+	UPROPERTY(EditAnywhere, Category = "Harvest Plot Size")
 	int32 PlotHeight;
-	UPROPERTY(EditAnywhere, Category = "Plot Size")
+	UPROPERTY(EditAnywhere, Category = "Harvest Plot Size")
 	int32 PlotWidth;
 
-	UPROPERTY(EditAnywhere, Category = "Plot Details")
+	UPROPERTY(EditAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotAvailableWater;
-	UPROPERTY(VisibleAnywhere, Category = "Plot Details")
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotWaterRequirement = 0.f;
-	UPROPERTY(VisibleAnywhere, Category = "Plot Details")
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotWaterUpKeep = 0.f;
-	UPROPERTY(VisibleAnywhere, Category = "Plot Details")
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotCostUpKeep = 0.f;
-	UPROPERTY(VisibleAnywhere, Category = "Plot Details")
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotScore = 0.f;
 
 	FVector CurrentWorldLocation;
@@ -56,14 +56,14 @@ private:
 
 	AActor* ParentActor = this;
 
-	UPROPERTY(EditAnywhere, meta = (AllowPrivateAccess = "true"))
-	ASoil* ActorToSpawn;
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = "Harvest Plot Setup")
+	TSubclassOf<ASoil> ActorToSpawn;
 	
-	UPROPERTY(VisibleAnywhere, Category = "Plot Details")
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	TArray<ASoil*> SoilInPlot;
 
 	//You can create the plot in the editor
-	UFUNCTION(CallInEditor, Category = "Plot Setup")
+	UFUNCTION(CallInEditor, Category = "Harvest Plot Setup")
 	void GeneratePlot();
 
 	//Function that is called every tick/event timer of the game to get the current resources being used/generated from the Plants in the Harvest Plot

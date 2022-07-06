@@ -65,11 +65,11 @@ private:
 	* SaplingMesh	- When the plant has started to develop and looks like a sapling/growing plant (Looks the same as the other SaplingMeshes)
 	* PlantMesh		- When the plant has completed growing (Has a unique Mesh that is distinguishable to other plants i.e Corn vs Tomato)
 	*/
-	UPROPERTY(EditAnywhere, Category = "Appearances")
+	UPROPERTY(EditDefaultsOnly, Category = "Appearances")
 	UStaticMesh* SeedlingMesh;
-	UPROPERTY(EditAnywhere, Category = "Appearances")
+	UPROPERTY(EditDefaultsOnly, Category = "Appearances")
 	UStaticMesh* SaplingMesh;
-	UPROPERTY(EditAnywhere, Category = "Appearances")
+	UPROPERTY(EditDefaultsOnly, Category = "Appearances")
 	UStaticMesh* PlantMesh;
 
 	UStaticMeshComponent* MeshComponent;
@@ -85,21 +85,21 @@ private:
 	float CurrentTimeToHarvest;
 	float RemainingTimeToHarvest;
 
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float PlantingCost = 100;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float WaterRequiredToGrow = 10;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float TimeTakenToGrow = 10;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float HarvestTime = 6;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float HarvestValue = 10;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float CostUpKeep = 5;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float WateringUpKeep = 2;
-	UPROPERTY(EditAnywhere, Category = "Plant Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float TimePerCycle = 1.0;
 	
 	//Start growing the plant when there is enough water available && it is not fully grown

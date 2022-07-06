@@ -42,8 +42,8 @@ void ASoil::SpawnPlantToGrow()
 		FVector ActorToSpawnLocation = GetActorLocation();
 		FRotator ActorToSpawnRotation = GetActorRotation();
 
-		CurrentPlantInSoil = GetWorld()->SpawnActor<APlantBase>(ActorToSpawn->GetClass(), ActorToSpawnLocation, ActorToSpawnRotation);
-
+		CurrentPlantInSoil = GetWorld()->SpawnActor<APlantBase>(ActorToSpawn, ActorToSpawnLocation, ActorToSpawnRotation);
+		
 		if (CurrentPlantInSoil)
 		{
 			CurrentPlantInSoil->AttachToActor(ParentActor, FAttachmentTransformRules::KeepWorldTransform);
