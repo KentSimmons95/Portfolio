@@ -17,7 +17,7 @@ ABaseHarvestPlot::ABaseHarvestPlot()
 void ABaseHarvestPlot::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -72,17 +72,26 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 	//If the Soil has a Plant in it AND it is Fully Grown - get their UpKeep/Value stats for the Harvest Plot
 	if (SoilInPlot.Num() > 0)
 	{
+		float TempWaterUpKeep = 0.f;
+		float TempCostUpKeep = 0.f;
+		float TempHarvestValue = 0.f;
+
 		for (ASoil* Soil : SoilInPlot)
 		{
 			if (Soil->bHasPlantInSoil && Soil->GetCurrentPlantInSoil()->IsPlantFullyGrown())
 			{
 				APlantBase* PlantInSoil = Soil->GetCurrentPlantInSoil();
 
-				CurrentHarvestPlotWaterUpKeep += PlantInSoil->GetWateringUpKeep();
-				CurrentHarvestPlotCostUpKeep +=  PlantInSoil->GetCostUpKeep();
-				CurrentHarvestPlotScore += PlantInSoil->GetHarvestValue();
+				//Total all the Values in Temporary Variables - then assign them to the plot scores before 
+				//They get reset on the next UpdateHarvestPlotData() call
+				TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
+				TempCostUpKeep += PlantInSoil->GetCostUpKeep();
+				TempHarvestValue += PlantInSoil->GetHarvestValue();				
 			}
 		}
+		CurrentHarvestPlotWaterUpKeep = TempWaterUpKeep;
+		CurrentHarvestPlotCostUpKeep = TempCostUpKeep;
+		CurrentHarvestPlotScore = TempHarvestValue;
 	}
 }
 
