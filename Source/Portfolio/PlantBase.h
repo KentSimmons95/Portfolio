@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlantBase.generated.h"
 
 /** Plant base class
@@ -74,6 +75,9 @@ private:
 
 	UStaticMeshComponent* MeshComponent;
 
+	UGameplayStatics* GameplayStatic;
+	class APortfolioGameModeBase* GameMode;
+
 	//Set to false at begin
 	bool bIsPlantFullyGrown = false;
 	bool bIsPlantReadyToHarvest = false;
@@ -121,6 +125,8 @@ private:
 	//Check if there is enough water available in the plot
 	UFUNCTION()
 	bool IsThereEnoughWater();
+	UFUNCTION()
+	bool IsThereEnoughResourcesOnFarm();
 	//Check to see if the plant is ready to harvest
 	UFUNCTION()
 	bool IsPlantReadyToHarvest();

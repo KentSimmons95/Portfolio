@@ -43,7 +43,7 @@ public:
 	UFUNCTION()
 	float GetPlantBaseUpKeepCost();
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	bool bHasPlantInSoil = false;
 
 private:
@@ -60,7 +60,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Soil Properties")
 	APlantBase* CurrentPlantInSoil;
-
+	
 	AActor* ParentActor = this;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")

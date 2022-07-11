@@ -23,14 +23,12 @@ void ASoil::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnPlantToGrow();
 }
 
 // Called every frame
 void ASoil::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ASoil::SpawnPlantToGrow()

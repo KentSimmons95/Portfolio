@@ -12,12 +12,26 @@ ABaseHarvestPlot::ABaseHarvestPlot()
 	SetActorTickInterval(TempTickRate);
 }
 
+float ABaseHarvestPlot::GetCurrentWaterUpKeep() const
+{
+	return CurrentHarvestPlotWaterUpKeep;
+}
+
+float ABaseHarvestPlot::GetCurrentPlotCostUpKeep() const
+{
+	return CurrentHarvestPlotCostUpKeep;
+}
+
+float ABaseHarvestPlot::GetCurrentHarvestPlotScore() const
+{
+	return CurrentHarvestPlotScore;
+}
 
 // Called when the game starts or when spawned
 void ABaseHarvestPlot::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 }
 
 // Called every frame
@@ -78,17 +92,25 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 
 		for (ASoil* Soil : SoilInPlot)
 		{
-			if (Soil->bHasPlantInSoil && Soil->GetCurrentPlantInSoil()->IsPlantFullyGrown())
+			if (Soil->bHasPlantInSoil)
 			{
-				APlantBase* PlantInSoil = Soil->GetCurrentPlantInSoil();
+				if (Soil->GetCurrentPlantInSoil()->IsPlantFullyGrown())
+				{
+					APlantBase* PlantInSoil = Soil->GetCurrentPlantInSoil();
 
-				//Total all the Values in Temporary Variables - then assign them to the plot scores before 
-				//They get reset on the next UpdateHarvestPlotData() call
-				TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
-				TempCostUpKeep += PlantInSoil->GetCostUpKeep();
-				TempHarvestValue += PlantInSoil->GetHarvestValue();				
+					//Total all the Values in Temporary Variables - then assign them to the plot scores before 
+					//They get reset on the next UpdateHarvestPlotData() call
+					TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
+					TempCostUpKeep += PlantInSoil->GetCostUpKeep();
+					TempHarvestValue += PlantInSoil->GetHarvestValue();
+				}
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Plant not found?"));
 			}
 		}
+
 		CurrentHarvestPlotWaterUpKeep = TempWaterUpKeep;
 		CurrentHarvestPlotCostUpKeep = TempCostUpKeep;
 		CurrentHarvestPlotScore = TempHarvestValue;

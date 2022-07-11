@@ -2,6 +2,7 @@
 
 
 #include "PlantBase.h"
+#include "PortfolioGameModeBase.h"
 
 // Sets default values
 APlantBase::APlantBase()
@@ -43,13 +44,26 @@ void APlantBase::BeginPlay()
 
 	RemainingTimeToGrow = TimeTakenToGrow;
 	TimeToGrowHalfwayPoint = TimeTakenToGrow / 2;
+
+	GameMode = Cast<APortfolioGameModeBase>(GameplayStatic->GetGameMode(GetWorld()));
+	
+	//Check if we can get the GameMode
+	if (!GameMode)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode not found!"));
+	}
 }
 
 // Called every frame
 void APlantBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	StartGrowingPlant();
+
+	if (GameMode)
+	{
+		StartGrowingPlant();
+	}
+	
 
 	UE_LOG(LogTemp, Warning, TEXT("Is Plant fully grown? %s"), (bIsPlantFullyGrown ? TEXT("True") : TEXT("False")));
 	UE_LOG(LogTemp, Warning, TEXT("Remaining time for plant to grow: %f"), RemainingTimeToGrow);
@@ -60,7 +74,14 @@ void APlantBase::StartGrowingPlant()
 	if (MeshComponent)
 	{
 		//Check if there is enough water available and that the plant is not fullygrown
+		/*
 		if (IsThereEnoughWater() && !bIsPlantFullyGrown)
+		{
+			UpdateTimeTakenToGrow();
+			UpdatePlantMesh();
+		}
+		*/
+		if (IsThereEnoughResourcesOnFarm() && !bIsPlantFullyGrown)
 		{
 			UpdateTimeTakenToGrow();
 			UpdatePlantMesh();
@@ -146,7 +167,22 @@ bool APlantBase::IsThereEnoughWater()
 {
 	//TODO get the current plot the plant is in and check to see if there is enough water
 	//Return true for now
+
 	return true;
+}
+
+bool APlantBase::IsThereEnoughResourcesOnFarm()
+{
+	if (GameMode)
+	{
+		bool HasEnoughResources = GameMode->HaveEnoughResources(WaterRequiredToGrow, PlantingCost);
+		return HasEnoughResources;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("GameMode not found!"));
+		return false;
+	}
 }
 
 bool APlantBase::IsPlantReadyToHarvest() 

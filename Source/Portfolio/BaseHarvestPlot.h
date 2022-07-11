@@ -22,6 +22,11 @@ class PORTFOLIO_API ABaseHarvestPlot : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABaseHarvestPlot();
+
+	float GetCurrentWaterUpKeep() const;
+	float GetCurrentPlotCostUpKeep() const;
+	float GetCurrentHarvestPlotScore() const;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,7 +36,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	
 	float TempTickRate = 1.0;
 
 	//Size properties of how large the plot will be (number of plots that will be ceated is Height * Width)
