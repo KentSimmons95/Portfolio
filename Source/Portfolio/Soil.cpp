@@ -2,6 +2,7 @@
 
 
 #include "Soil.h"
+#include "PortfolioGameModeBase.h"
 
 // Sets default values
 ASoil::ASoil()
@@ -23,6 +24,13 @@ void ASoil::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GameMode = Cast<APortfolioGameModeBase>(GameplayStatic->GetGameMode(GetWorld()));
+
+	if (!GameMode)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find PortfolioGameMode"));
+		return;
+	}
 }
 
 // Called every frame
@@ -31,7 +39,43 @@ void ASoil::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ASoil::SpawnPlantToGrow()
+void ASoil::GrowPlant()
+{
+	//Early return if we already have a plant in the soil
+	if (bHasPlantInSoil)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Plant already exists in current soil!"));
+		return;
+	}
+
+	//Find the Plant to Spawn in PlantInfo Struct and get the price on how much it costs
+	float PlantCost;
+	for (int i = 0; i < PlantsInfo.Num(); ++i)
+	{
+		if (ActorToSpawn->GetClass() == PlantsInfo[i].PlantType->GetClass())
+		{
+			PlantCost = PlantsInfo[i].PlantCost;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("ActorToSpawn Actor Class not found!"));
+			return;
+		}
+	}
+
+	//If there is enough gold available to plant then plant and subtract gold
+	if (GameMode->EnoughGoldToPlant(PlantCost))
+	{
+		GameMode->CalcPlantingCost(PlantCost);
+		SpawnPlant();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Enough gold to Plant!"));
+	}
+}
+
+void ASoil::SpawnPlant()
 {
 	//Spawn a Plant Actor from the Soil Actor
 	//First check if the PlantToSpawn is valid then spawn the Plant on the Soil Actor's Location and Rotation & Attach 
@@ -44,17 +88,17 @@ void ASoil::SpawnPlantToGrow()
 		
 		if (CurrentPlantInSoil)
 		{
-			CurrentPlantInSoil->AttachToActor(ParentActor, FAttachmentTransformRules::KeepWorldTransform);
+			CurrentPlantInSoil->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			bHasPlantInSoil = true;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to AttachToActor! Parent Actor: %s"), *ParentActor->GetActorNameOrLabel());
+			UE_LOG(LogTemp, Warning, TEXT("Failed to AttachToActor! Parent Actor: %s"), *this->GetActorNameOrLabel());
 		}
 	}
 }
 
-void ASoil::DestroyPlant()
+void ASoil::RefundPlant()
 {
 	//Check to see if we have a plant in the soil before destroying the actor
 	if (CurrentPlantInSoil)
@@ -62,7 +106,7 @@ void ASoil::DestroyPlant()
 		//Reset the current soil properties to empty since the plant is being removed
 		CurrentPlantWaterRequirement = 0;
 		CurrentPlantHarvestValue = 0;
-		CurrentPlantUpKeepCost = 0;
+		CurrentPlantGoldUpKeepCost = 0;
 
 		CurrentPlantInSoil->Destroy();
 
@@ -90,13 +134,13 @@ float ASoil::GetPlantHarvestValue()
 	return CurrentPlantHarvestValue;
 }
 
-float ASoil::GetPlantBaseUpKeepCost()
+float ASoil::GetPlantGoldUpKeepCost()
 {
 	if (bHasPlantInSoil)
 	{
-		CurrentPlantUpKeepCost = CurrentPlantInSoil->GetCostUpKeep();
+		CurrentPlantGoldUpKeepCost = CurrentPlantInSoil->GetCostUpKeep();
 	}
-
-	return CurrentPlantUpKeepCost;
+	
+	return CurrentPlantGoldUpKeepCost;
 }
 

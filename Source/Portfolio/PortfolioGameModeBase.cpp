@@ -7,8 +7,11 @@
 void APortfolioGameModeBase::StartPlay()
 {
 	Super::StartPlay();
-	GetHarvestPlotsInLevel();
+
+	TotalWaterOnFarm = StartingWaterOnFarm;
+	TotalGoldOnFarm = StartingGoldOnFarm;
 }
+
 
 float APortfolioGameModeBase::GetTotalWaterOnFarm() const
 {
@@ -22,7 +25,7 @@ float APortfolioGameModeBase::GetCurrentWaterAvailable()
 
 float APortfolioGameModeBase::GetTotalMoneyOnFarm() const
 {
-	return TotalMoneyOnFarm;
+	return TotalGoldOnFarm;
 }
 
 float APortfolioGameModeBase::GetCurrentMoneyAvailable()
@@ -37,7 +40,7 @@ float APortfolioGameModeBase::GetCurrentWaterUsage() const
 
 float APortfolioGameModeBase::GetCostUpKeepOnFarm() const
 {
-	return CurrentCostUpKeepOnFarm;
+	return CurrentGoldUpKeepOnFarm;
 }
 
 float APortfolioGameModeBase::GetCurrentHarvestValueOnFarm() const
@@ -45,36 +48,46 @@ float APortfolioGameModeBase::GetCurrentHarvestValueOnFarm() const
 	return CurrentHarvestValueOnFarm;
 }
 
-bool APortfolioGameModeBase::HaveEnoughResources(float& InPlantWaterCost, float& InPlantMoneyCost)
+bool APortfolioGameModeBase::HaveEnoughResources(float& InPlantMoneyCost)
 {
 	//Check if we have enough resources available to plant
 	//If there is enough Money AND Water then plant
-	bool HasEnoughWater = false;
 	bool HasEnoughMoney = false;
-	
-	if (GetCurrentWaterAvailable() > InPlantWaterCost)
-	{
-		HasEnoughWater = true;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not enough water to plant! - You are: %f water short"), InPlantWaterCost - GetCurrentWaterAvailable());
-		return HasEnoughWater;
-	}
 
-	if (GetCurrentMoneyAvailable() > InPlantMoneyCost)
+	if (GetCurrentMoneyAvailable() >= InPlantMoneyCost)
 	{
 		HasEnoughMoney = true;
+		return HasEnoughMoney;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Not enough money to plant! - You are: %f money short"), InPlantMoneyCost - GetCurrentMoneyAvailable());
 		return HasEnoughMoney;
 	}
+}
 
-	if (HasEnoughWater && HasEnoughMoney)
+void APortfolioGameModeBase::CalcCurrentAvailableWaterOnFarm()
+{
+	CurrentAvailableWaterOnFarm = TotalWaterOnFarm - CurrentWaterUsageOnFarm;
+}
+
+void APortfolioGameModeBase::CalcCurrentGoldUpKeepOnFarm()
+{
+	CurrentAvailableGoldOnFarm = TotalGoldOnFarm - CurrentGoldUpKeepOnFarm;
+}
+
+void APortfolioGameModeBase::CalcPlantingCost(float PlantingCost)
+{
+	TotalGoldOnFarm -= PlantingCost;
+}
+
+bool APortfolioGameModeBase::EnoughGoldToPlant(float PlantCost)
+{
+	bool CanPlant = false;
+	if (PlantCost <= TotalGoldOnFarm)
 	{
-		return true;
+		CanPlant = true;
+		return CanPlant;
 	}
 	else
 	{
@@ -96,12 +109,16 @@ void APortfolioGameModeBase::UpdateFarmStats()
 			//Total all the Values in Temporary Variables - then assign them to the total farm scores 
 			TempCurrentWaterUpKeep += CurrentHarvestPlot->GetCurrentWaterUpKeep();
 			TempCurrentPlotUpKeep += CurrentHarvestPlot->GetCurrentPlotCostUpKeep();
-			TempCurrentHarvestValue += CurrentHarvestPlot->GetCurrentHarvestPlotScore();
+			TempCurrentHarvestValue += CurrentHarvestPlot->GetCurrentHarvestPlotGoldScore();
 		}
 
 		CurrentWaterUsageOnFarm = TempCurrentWaterUpKeep;
-		CurrentCostUpKeepOnFarm = TempCurrentPlotUpKeep;
+		CurrentGoldUpKeepOnFarm = TempCurrentPlotUpKeep;
 		CurrentHarvestValueOnFarm = TempCurrentHarvestValue;
+
+		UE_LOG(LogTemp, Warning, TEXT("CurrentWaterUsageOnFarm: %f"), CurrentWaterUsageOnFarm);
+		UE_LOG(LogTemp, Warning, TEXT("CurrentCostUpKeepOnFarm: %f"), CurrentGoldUpKeepOnFarm);
+		UE_LOG(LogTemp, Warning, TEXT("CurrentHarvestValueOnFarm: %f"), CurrentHarvestValueOnFarm);
 	}
 	else
 	{
@@ -109,22 +126,14 @@ void APortfolioGameModeBase::UpdateFarmStats()
 	}
 }
 
-void APortfolioGameModeBase::GetHarvestPlotsInLevel()
+void APortfolioGameModeBase::RegisterHarvestPlot(ABaseHarvestPlot* PlotToRegister)
 {
-	if (ClassToFind)
+	if (PlotToRegister)
 	{
-		//Get all the Harvest actors  into an Array of AActors
-		GameplayStatic->GetAllActorsOfClass(GetWorld(), ClassToFind, FoundActors);
-
-		//Once we have all the Harvest Actors cast them into a proper Array type conainer of AHarvestPlot
-		for (AActor* Actor : FoundActors)
-		{
-			
-			HarvestPlots.Add(Cast<ABaseHarvestPlot>(Actor));
-		}
+		HarvestPlots.Add(PlotToRegister);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("GameMode missing class to find!"));
+		UE_LOG(LogTemp, Warning, TEXT("HarvestPlot is invalid!"));
 	}
 }

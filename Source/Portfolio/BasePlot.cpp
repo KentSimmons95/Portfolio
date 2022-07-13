@@ -2,6 +2,8 @@
 
 
 #include "BaseHarvestPlot.h"
+#include "PortfolioGameModeBase.h"
+
 
 // Sets default values
 ABaseHarvestPlot::ABaseHarvestPlot()
@@ -22,16 +24,19 @@ float ABaseHarvestPlot::GetCurrentPlotCostUpKeep() const
 	return CurrentHarvestPlotCostUpKeep;
 }
 
-float ABaseHarvestPlot::GetCurrentHarvestPlotScore() const
+float ABaseHarvestPlot::GetCurrentHarvestPlotGoldScore() const
 {
-	return CurrentHarvestPlotScore;
+	return CurrentHarvestPlotGoldScore;
 }
 
 // Called when the game starts or when spawned
 void ABaseHarvestPlot::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	//Add the Harvest Plot to the game mode
+	GameMode = Cast<APortfolioGameModeBase>(GameplayStatic->GetGameMode(GetWorld()));
+	GameMode->RegisterHarvestPlot(this);
 }
 
 // Called every frame
@@ -39,7 +44,7 @@ void ABaseHarvestPlot::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UpdateHarvestPlotData();
+	UpdateFarmData();
 }
 
 void ABaseHarvestPlot::GeneratePlot()
@@ -88,7 +93,7 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 	{
 		float TempWaterUpKeep = 0.f;
 		float TempCostUpKeep = 0.f;
-		float TempHarvestValue = 0.f;
+		float TempHarvestGoldValue = 0.f;
 
 		for (ASoil* Soil : SoilInPlot)
 		{
@@ -102,18 +107,18 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 					//They get reset on the next UpdateHarvestPlotData() call
 					TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
 					TempCostUpKeep += PlantInSoil->GetCostUpKeep();
-					TempHarvestValue += PlantInSoil->GetHarvestValue();
+					TempHarvestGoldValue += PlantInSoil->GetHarvestValue();
 				}
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Plant not found?"));
+				//UE_LOG(LogTemp, Warning, TEXT("Plant not found? TODO - Register Soil with Plant to Plot"));
 			}
 		}
 
 		CurrentHarvestPlotWaterUpKeep = TempWaterUpKeep;
 		CurrentHarvestPlotCostUpKeep = TempCostUpKeep;
-		CurrentHarvestPlotScore = TempHarvestValue;
+		CurrentHarvestPlotGoldScore = TempHarvestGoldValue;
 	}
 }
 
@@ -121,6 +126,12 @@ void ABaseHarvestPlot::GetSpawnLocationForPlant(uint32 Height, uint32 Width, FVe
 {
 	OutSpawnLocation.X = CurrentWorldLocation.X + (Height * 100);
 	OutSpawnLocation.Y = CurrentWorldLocation.Y + (Width * 100);
+}
+
+void ABaseHarvestPlot::UpdateFarmData()
+{
+	UpdateHarvestPlotData();
+	
 }
 
 

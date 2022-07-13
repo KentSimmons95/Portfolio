@@ -25,7 +25,7 @@ public:
 
 	float GetCurrentWaterUpKeep() const;
 	float GetCurrentPlotCostUpKeep() const;
-	float GetCurrentHarvestPlotScore() const;
+	float GetCurrentHarvestPlotGoldScore() const;
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,19 +44,18 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Harvest Plot Size")
 	int32 PlotWidth;
 
-	UPROPERTY(EditAnywhere, Category = "Harvest Plot Details")
-	float CurrentHarvestPlotAvailableWater;
-	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
-	float CurrentHarvestPlotWaterRequirement = 0.f;
 	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotWaterUpKeep = 0.f;
 	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	float CurrentHarvestPlotCostUpKeep = 0.f;
 	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
-	float CurrentHarvestPlotScore = 0.f;
+	float CurrentHarvestPlotGoldScore = 0.f;
 
 	FVector CurrentWorldLocation;
 	FRotator CurrentWorldRotation;
+
+	UGameplayStatics* GameplayStatic;
+	class APortfolioGameModeBase* GameMode;
 
 	AActor* ParentActor = this;
 
@@ -75,6 +74,10 @@ private:
 	void UpdateHarvestPlotData();
 	UFUNCTION()
 	void GetSpawnLocationForPlant(uint32 Height, uint32 Width, FVector &OutSpawnLocation);
+
+	//Send the harvest plots data to the GameMode/Farm
+	UFUNCTION()
+	void UpdateFarmData();
 
 	//TODO: When a plant is deleted recalculate the resources available to harvest plot/game score
 };

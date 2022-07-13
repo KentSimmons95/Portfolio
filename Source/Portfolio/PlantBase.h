@@ -13,21 +13,6 @@
 *	Explain what the plant class has and what each stat does
 */
 
-UENUM()
-enum EPlantFamilies
-{
-	Amaryllidaceae	UMETA(DisplayName = "Amaryllidaceae"),
-	Brassicas		UMETA(DisplayName = "Brassicas"),
-	Chenopodiaceae	UMETA(DisplayName = "Chenopodiaceae"),
-	Compositae		UMETA(DisplayName = "Compositae"),
-	Convolvulaceae	UMETA(DisplayName = "Convolvulaceae"),
-	Cucurbitaceae	UMETA(DisplayName = "Cucurbitaceae"),
-	Fabaceae		UMETA(DisplayName = "Fabaceae"),
-	Poaceae			UMETA(DisplayName = "Poaceae"),
-	Solanaceae		UMETA(DisplayName = "Solanaceae"),
-	Umbelliferae	UMETA(DisplayName = "Umbelliferae")
-};
-
 UCLASS(Abstract)
 class PORTFOLIO_API APlantBase : public AActor
 {
@@ -46,17 +31,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//Getters for the plants properties
-	UFUNCTION()
 	float GetWaterRequiredToGrow() const;
-	UFUNCTION()
 	float GetHarvestValue() const;
-	UFUNCTION()
 	float GetCostUpKeep() const;
-	UFUNCTION()
 	float GetWateringUpKeep() const;
 
 	//Check if the plant is fully grown - BaseTimeTakenToGrow - CurrentGrowTime
-	UFUNCTION()
 	bool IsPlantFullyGrown();
 
 private:
@@ -75,9 +55,6 @@ private:
 
 	UStaticMeshComponent* MeshComponent;
 
-	UGameplayStatics* GameplayStatic;
-	class APortfolioGameModeBase* GameMode;
-
 	//Set to false at begin
 	bool bIsPlantFullyGrown = false;
 	bool bIsPlantReadyToHarvest = false;
@@ -89,10 +66,6 @@ private:
 	float CurrentTimeToHarvest;
 	float RemainingTimeToHarvest;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
-	float PlantingCost = 100;
-	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
-	float WaterRequiredToGrow = 10;
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float TimeTakenToGrow = 10;
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
@@ -106,9 +79,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float TimePerCycle = 1.0;
 	
-	//Start growing the plant when there is enough water available && it is not fully grown
 	UFUNCTION()
-	void StartGrowingPlant();
+	void GrowPlant();
 	//Update the remaining time to grow for the plant
 	UFUNCTION()
 	void UpdateTimeTakenToGrow();
@@ -122,11 +94,6 @@ private:
 	UFUNCTION()
 	void GetPlantStats(float& OutHarvestValue, float& OutCostUpKeep, float& OutWateringUpKeep);
 
-	//Check if there is enough water available in the plot
-	UFUNCTION()
-	bool IsThereEnoughWater();
-	UFUNCTION()
-	bool IsThereEnoughResourcesOnFarm();
 	//Check to see if the plant is ready to harvest
 	UFUNCTION()
 	bool IsPlantReadyToHarvest();
@@ -141,11 +108,5 @@ private:
 	UFUNCTION()
 	bool IsPlantASapling() const;
 	UFUNCTION()
-	bool IsPlantAFullPlant() const;
-
-	//Calculate the amount of water that is required to grow each tick - BaseWaterRequiredToGrow / BaseTimeTakenToGrow
-	UFUNCTION()
-	float WaterRequiredToGrowEachCycle();
-
-	
+	bool IsPlantAFullPlant() const;	
 };

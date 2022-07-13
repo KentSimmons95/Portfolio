@@ -23,6 +23,10 @@ public:
 	
 	virtual void StartPlay() override;
 
+	//Harvest Plots can get the game mode and add themselves
+	UFUNCTION()
+	void RegisterHarvestPlot(ABaseHarvestPlot* PlotToRegister);
+
 	//Getters for the games water
 	UFUNCTION()
 	float GetTotalWaterOnFarm() const;
@@ -44,12 +48,19 @@ public:
 	float GetCurrentHarvestValueOnFarm() const;
 
 	//Check that there is enough resources available to plant
-	bool HaveEnoughResources(float &InPlantWaterCost, float &InPlantMoneyCost);
+	bool HaveEnoughResources(float &InPlantMoneyCost);
+
+	//Calculations for Net-Resource values
+	void CalcCurrentAvailableWaterOnFarm();
+	void CalcCurrentGoldUpKeepOnFarm();
+
+	//Calculate resources when planting
+	void CalcPlantingCost(float PlantCost);
+	bool EnoughGoldToPlant(float PlantCost);
 
 protected:
 
 private:
-
 	//List of Harvest plots in the game
 	TArray<ABaseHarvestPlot*> HarvestPlots;
 
@@ -57,21 +68,32 @@ private:
 	TSubclassOf<ABaseHarvestPlot> ClassToFind;
 	UPROPERTY(VisibleAnywhere, Category = "Game Info")
 	TArray<AActor*> FoundActors;
-		
+	
 	UGameplayStatics* GameplayStatic;
 
+	//The water that is available at the start of the game
 	UPROPERTY(EditDefaultsOnly, Category = "Farm Resources")
+	float StartingWaterOnFarm = 250;
+	//The total water that is available in the game (Starting water + water gained over time) - set to StartingWaterOnFarm at BeginPlay
+	UPROPERTY(VisibleAnywhere, Category = "Farm Resources")
 	float TotalWaterOnFarm;
+	//The gold that is available at the start of the game
 	UPROPERTY(EditDefaultsOnly, Category = "Farm Resources")
-	float TotalMoneyOnFarm;
+	float StartingGoldOnFarm = 500;
+	//The total gold that is available in the game (Starting gold + gold gained over time) - set to StartingGoldOnFarm at BeginPlay
+	UPROPERTY(VisibleAnywhere, Category = "Farm Resources")
+	float TotalGoldOnFarm;
+
 	float CurrentWaterUsageOnFarm;
-	float CurrentCostUpKeepOnFarm;
+	float CurrentAvailableWaterOnFarm;
+
+	float CurrentGoldUpKeepOnFarm;
+	float CurrentAvailableGoldOnFarm;
+
 	float CurrentHarvestValueOnFarm;
 
 	//Go through each Harvest Plot in the game and get their stat totals to update the Game Mode information
 	UFUNCTION()
 	void UpdateFarmStats();
-	//Function that is called when the level is loaded/begin play is called to get all of the harvest plots in the level.
-	UFUNCTION()
-	void GetHarvestPlotsInLevel();
+
 };

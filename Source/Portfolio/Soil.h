@@ -7,6 +7,22 @@
 #include "PlantBase.h"
 #include "Soil.generated.h"
 
+/** Struct that store information about the different types of plants and their
+*	cost/refund values 
+*/
+USTRUCT(BlueprintType)
+struct FPlantIfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Plant Info")
+	TSubclassOf<APlantBase> PlantType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Plant Info")
+	float PlantCost;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Plant Info")
+	float PlantRefund;
+};
+
 /** Soil class
 *	The Soil Class is the connection between the Plant and HarvestPlot Class.
 *	A Plant must be in Soil to grow and there has to be a Harvest Plot for the Soil 
@@ -15,7 +31,6 @@
 *	The Soil class can keep track of it's current conditions such as how much Water is in the Soil,
 *	Fertilizer levels and overall Soil quality.
 */
-
 UCLASS()
 class PORTFOLIO_API ASoil : public AActor
 {
@@ -37,11 +52,11 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION()
-	float GetPlantWaterRequiredToGrow();
+	float GetPlantWaterRequiredToGrow(); //TODO Remove OR Implement better (Water growing system)
 	UFUNCTION()
 	float GetPlantHarvestValue();
 	UFUNCTION()
-	float GetPlantBaseUpKeepCost();
+	float GetPlantGoldUpKeepCost();
 
 	UPROPERTY(VisibleAnywhere)
 	bool bHasPlantInSoil = false;
@@ -51,18 +66,22 @@ private:
 
 	float CurrentPlantWaterRequirement = 0;
 	float CurrentPlantHarvestValue = 0;
-	float CurrentPlantUpKeepCost = 0;
+	float CurrentPlantGoldUpKeepCost = 0;
+
+	UGameplayStatics* GameplayStatic;
+	class APortfolioGameModeBase* GameMode;
 
 	//The type of Plant we want to Spawn - TODO: Called on UI input
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<APlantBase> ActorToSpawn;
-	
 
+	//Stores the information about different plant child classes (PlantCost/RefundValue)
+	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"), Category = "Plant Types")
+	TArray<FPlantIfo> PlantsInfo;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Soil Properties")
 	APlantBase* CurrentPlantInSoil;
 	
-	AActor* ParentActor = this;
-
 	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
 	float WaterLevels;
 	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
@@ -70,9 +89,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Soil Properties")
 	float SoilQuality;
 
-	//Function that will begin growing a new Plant, needs to check if enough resources are available to start growing
+	//Spawn a new plant into the world
 	UFUNCTION(CallInEditor, Category = "Soil Properties")
-	void SpawnPlantToGrow();
+	void GrowPlant();
+	void SpawnPlant();
+
 	UFUNCTION()
-	void DestroyPlant();
+	void RefundPlant();
 };
