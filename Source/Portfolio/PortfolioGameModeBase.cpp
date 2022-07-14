@@ -134,6 +134,6 @@ void APortfolioGameModeBase::RegisterHarvestPlot(ABaseHarvestPlot* PlotToRegiste
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("HarvestPlot is invalid!"));
+		UE_LOG(LogTemp, Warning, TEXT("Failed to register Harvest Plot!"));
 	}
 }

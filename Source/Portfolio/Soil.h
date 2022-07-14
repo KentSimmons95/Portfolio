@@ -57,10 +57,14 @@ public:
 	float GetPlantHarvestValue();
 	UFUNCTION()
 	float GetPlantGoldUpKeepCost();
+	UFUNCTION()
+	bool HasPlantInSoil();
+	//When the plant is an Adult change the flag bPlantInSoilIsAdult to true
+	UFUNCTION()
+	void SetPlantInsideIsAdult();
 
-	UPROPERTY(VisibleAnywhere)
-	bool bHasPlantInSoil = false;
-
+	bool GetPlantInSoilIsAdult();
+	
 private:
 	UStaticMeshComponent* Mesh;
 
@@ -68,8 +72,16 @@ private:
 	float CurrentPlantHarvestValue = 0;
 	float CurrentPlantGoldUpKeepCost = 0;
 
+	UPROPERTY(VisibleAnywhere)
+	bool bHasPlantInSoil = false;
+
+	bool bPlantInSoilIsAdult = false;
+	bool bIsRegisteredToHarvestPlot = false;
+
 	UGameplayStatics* GameplayStatic;
 	class APortfolioGameModeBase* GameMode;
+
+	class ABaseHarvestPlot* HarvestPlotOwner;
 
 	//The type of Plant we want to Spawn - TODO: Called on UI input
 	UPROPERTY(EditDefaultsOnly, meta = (AllowPrivateAccess = "true"))

@@ -2,6 +2,7 @@
 
 
 #include "Soil.h"
+#include "BaseHarvestPlot.h"
 #include "PortfolioGameModeBase.h"
 
 // Sets default values
@@ -31,12 +32,21 @@ void ASoil::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Failed to find PortfolioGameMode"));
 		return;
 	}
+	
+	//Find the Parent Harvest Plot that the Soil actor is attached to - Used for registering the soil actor to the harvest plot
+	HarvestPlotOwner = Cast<ABaseHarvestPlot>(GetAttachParentActor());
+	if (!HarvestPlotOwner)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find parent Harvest Plot for Soil Actor: %s"), *this->GetActorNameOrLabel());
+	}
+
 }
 
 // Called every frame
 void ASoil::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ASoil::GrowPlant()
@@ -142,5 +152,21 @@ float ASoil::GetPlantGoldUpKeepCost()
 	}
 	
 	return CurrentPlantGoldUpKeepCost;
+}
+
+bool ASoil::HasPlantInSoil()
+{
+	return bHasPlantInSoil;
+}
+
+void ASoil::SetPlantInsideIsAdult()
+{
+	bPlantInSoilIsAdult = true;
+	UE_LOG(LogTemp, Warning, TEXT("WE ARE AN ADULT NOW"));
+}
+
+bool ASoil::GetPlantInSoilIsAdult()
+{
+	return bPlantInSoilIsAdult;
 }
 

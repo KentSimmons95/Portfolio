@@ -27,6 +27,9 @@ public:
 	float GetCurrentPlotCostUpKeep() const;
 	float GetCurrentHarvestPlotGoldScore() const;
 
+	void RegisterSoilWithGrownPlant(ASoil* Soil);
+	
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -64,6 +67,9 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
 	TArray<ASoil*> SoilInPlot;
+
+	UPROPERTY(VisibleAnywhere, Category = "Harvest Plot Details")
+	TArray<ASoil*> RegisteredSoilWithGrownPlants;
 
 	//You can create the plot in the editor
 	UFUNCTION(CallInEditor, Category = "Harvest Plot Setup")

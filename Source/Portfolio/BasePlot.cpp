@@ -29,6 +29,18 @@ float ABaseHarvestPlot::GetCurrentHarvestPlotGoldScore() const
 	return CurrentHarvestPlotGoldScore;
 }
 
+void ABaseHarvestPlot::RegisterSoilWithGrownPlant(ASoil* Soil)
+{
+	if (Soil)
+	{
+		RegisteredSoilWithGrownPlants.Add(Soil);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to register Soil with Adult Plant!"));
+	}
+}
+
 // Called when the game starts or when spawned
 void ABaseHarvestPlot::BeginPlay()
 {
@@ -97,7 +109,7 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 
 		for (ASoil* Soil : SoilInPlot)
 		{
-			if (Soil->bHasPlantInSoil)
+			if (Soil->HasPlantInSoil())
 			{
 				if (Soil->GetCurrentPlantInSoil()->IsPlantFullyGrown())
 				{
@@ -115,7 +127,6 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 				//UE_LOG(LogTemp, Warning, TEXT("Plant not found? TODO - Register Soil with Plant to Plot"));
 			}
 		}
-
 		CurrentHarvestPlotWaterUpKeep = TempWaterUpKeep;
 		CurrentHarvestPlotCostUpKeep = TempCostUpKeep;
 		CurrentHarvestPlotGoldScore = TempHarvestGoldValue;

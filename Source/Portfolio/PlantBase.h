@@ -55,21 +55,24 @@ private:
 
 	UStaticMeshComponent* MeshComponent;
 
+	class ASoil* SoilOwner;
+	bool bHasSoilOwner = false;
+
 	//Set to false at begin
-	bool bIsPlantFullyGrown = false;
+	bool bIsPlantAnAdult = false;
 	bool bIsPlantReadyToHarvest = false;
 
 	float CurrentGrowTime;
 	float RemainingTimeToGrow;
 	float TimeToGrowHalfwayPoint;
 
-	float CurrentTimeToHarvest;
-	float RemainingTimeToHarvest;
+	float CurrentTimeTillHarvest;
+	float RemainingTimeTillHarvest;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float TimeTakenToGrow = 10;
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
-	float HarvestTime = 6;
+	float HarvestFrequency = 2;
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
 	float HarvestValue = 10;
 	UPROPERTY(EditDefaultsOnly, Category = "Plant Stats")
@@ -108,5 +111,5 @@ private:
 	UFUNCTION()
 	bool IsPlantASapling() const;
 	UFUNCTION()
-	bool IsPlantAFullPlant() const;	
+	bool IsPlantAnAdult() const;	
 };

@@ -25,7 +25,7 @@ float APlantBase::GetWaterRequiredToGrow() const
 
 float APlantBase::GetHarvestValue() const
 {
-	return HarvestValue;
+	return HarvestValue/HarvestFrequency;
 }
 
 float APlantBase::GetCostUpKeep() const
@@ -45,7 +45,6 @@ void APlantBase::BeginPlay()
 
 	RemainingTimeToGrow = TimeTakenToGrow;
 	TimeToGrowHalfwayPoint = TimeTakenToGrow / 2;
-
 }
 
 // Called every frame
@@ -53,21 +52,44 @@ void APlantBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	GrowPlant();
+	//If we haven'd found our owning Soil Actor then try find it
+	if (!bHasSoilOwner)
+	{
+		SoilOwner = Cast<ASoil>(GetAttachParentActor());
+		if (!SoilOwner)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to find parent Soil Actor for: %s"), *this->GetActorNameOrLabel());
+		}
+	}
+
+	if (!bIsPlantAnAdult)
+	{
+		GrowPlant();
+	}
+	else
+	{
+		HarvestPlant();
+	}
+
+	//If the plant has grown into an Adult but the flag in the Parent Soil Actor hasn't been set then set it to true
+	if (bIsPlantAnAdult && !SoilOwner->GetPlantInSoilIsAdult())
+	{
+		SoilOwner->SetPlantInsideIsAdult();
+	}
 }
 
 void APlantBase::GrowPlant()
 {
 	if (MeshComponent)
 	{
-		if (!bIsPlantFullyGrown)
+		if (!bIsPlantAnAdult)
 		{
 			UpdateTimeTakenToGrow();
 			UpdatePlantMesh();
 		}
 		else
 		{
-			bIsPlantFullyGrown = true;
+			bIsPlantAnAdult = true;
 		}
 	}
 	else
@@ -99,7 +121,7 @@ void APlantBase::UpdatePlantMesh()
 		return;
 	}
 
-	if (IsPlantAFullPlant())
+	if (IsPlantAnAdult())
 	{
 		MeshComponent->SetStaticMesh(PlantMesh);
 		return;
@@ -110,13 +132,8 @@ void APlantBase::HarvestPlant()
 {
 	if (IsPlantReadyToHarvest())
 	{
-		//TODO: Get scoreboard and add points to score - then reset plant to not ready to harvest
-		
-		//Reset the remaining time to harvest back to the base time
-		//Reset the Current time to harvest counter to 0
-		RemainingTimeToHarvest = HarvestTime;
-		CurrentTimeToHarvest = 0;
-
+		//When the plant is ready to harvest, reset the timer back to 0 and flag plant not ready to harvest
+		CurrentTimeTillHarvest = 0;
 		bIsPlantReadyToHarvest = false;
 	}
 }
@@ -124,7 +141,7 @@ void APlantBase::HarvestPlant()
 void APlantBase::GetPlantStats(float& OutHarvestValue, float& OutCostUpKeep, float& OutWateringUpKeep)
 {
 	//Only check the plants stats if it's fully grown and is producing a yield
-	if (bIsPlantFullyGrown)
+	if (bIsPlantAnAdult)
 	{
 		OutHarvestValue = GetHarvestValue();
 		OutCostUpKeep  = GetCostUpKeep();
@@ -137,24 +154,26 @@ bool APlantBase::IsPlantFullyGrown()
 {
 	if (RemainingTimeToGrow == 0)
 	{
-		bIsPlantFullyGrown = true;
-		return bIsPlantFullyGrown;
+		bIsPlantAnAdult = true;
+		return bIsPlantAnAdult;
 	}
 	else
 	{
-		return bIsPlantFullyGrown;
+		return bIsPlantAnAdult;
 	}
 }
 
 bool APlantBase::IsPlantReadyToHarvest() 
 {
-	if (HarvestTime == CurrentTimeToHarvest)
+	//Check if time since last 
+	if (CurrentTimeTillHarvest == HarvestFrequency)
 	{
 		bIsPlantReadyToHarvest = true;
 		return bIsPlantReadyToHarvest;
 	}
 	else
 	{
+		++CurrentTimeTillHarvest;
 		return bIsPlantReadyToHarvest;
 	}
 }
@@ -183,7 +202,7 @@ bool APlantBase::IsPlantASapling() const
 	}
 }
 
-bool APlantBase::IsPlantAFullPlant() const
+bool APlantBase::IsPlantAnAdult() const
 {
 	if (CurrentGrowTime == TimeTakenToGrow)
 	{
