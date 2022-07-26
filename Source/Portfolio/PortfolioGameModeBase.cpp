@@ -95,6 +95,11 @@ bool APortfolioGameModeBase::EnoughGoldToPlant(float PlantCost)
 	}
 }
 
+void APortfolioGameModeBase::CollectHarvestPlotGoldIncome(float& CurrentHarvestPlotGoldScore)
+{
+	TotalGoldOnFarm += CurrentHarvestPlotGoldScore;
+}
+
 void APortfolioGameModeBase::UpdateFarmStats()
 {
 	//If we have 1 or more harvest plots then we can get their stats

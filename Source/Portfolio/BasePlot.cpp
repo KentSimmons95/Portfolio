@@ -99,8 +99,8 @@ void ABaseHarvestPlot::GeneratePlot()
 
 void ABaseHarvestPlot::UpdateHarvestPlotData()
 {
-	//Iterate through all of the Soil Actors in the Harvest Plot and check whether they have a Plant or not
-	//If the Soil has a Plant in it AND it is Fully Grown - get their UpKeep/Value stats for the Harvest Plot
+	//Iterate through all of the Soil Actors in the Harvest Plot and check whether they have an Adult Plant or not
+	//If the Soil has an Adult Plant - get their UpKeep/Value stats for the Harvest Plot
 	if (SoilInPlot.Num() > 0)
 	{
 		float TempWaterUpKeep = 0.f;
@@ -109,18 +109,16 @@ void ABaseHarvestPlot::UpdateHarvestPlotData()
 
 		for (ASoil* Soil : SoilInPlot)
 		{
-			if (Soil->HasPlantInSoil())
+			if (Soil->HasAdultPlantInSoil())
 			{
-				if (Soil->GetCurrentPlantInSoil()->IsPlantFullyGrown())
-				{
-					APlantBase* PlantInSoil = Soil->GetCurrentPlantInSoil();
+				APlantBase* PlantInSoil = Soil->GetCurrentPlantInSoil();
 
-					//Total all the Values in Temporary Variables - then assign them to the plot scores before 
-					//They get reset on the next UpdateHarvestPlotData() call
-					TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
-					TempCostUpKeep += PlantInSoil->GetCostUpKeep();
-					TempHarvestGoldValue += PlantInSoil->GetHarvestValue();
-				}
+				//Total all the Values in Temporary Variables - then assign them to the plot scores before 
+				//They get reset on the next UpdateHarvestPlotData() call
+				TempWaterUpKeep += PlantInSoil->GetWateringUpKeep();
+				TempCostUpKeep += PlantInSoil->GetCostUpKeep();
+				TempHarvestGoldValue += PlantInSoil->GetHarvestValue();
+				
 			}
 			else
 			{
@@ -142,7 +140,7 @@ void ABaseHarvestPlot::GetSpawnLocationForPlant(uint32 Height, uint32 Width, FVe
 void ABaseHarvestPlot::UpdateFarmData()
 {
 	UpdateHarvestPlotData();
-	
+	GameMode->CollectHarvestPlotGoldIncome(CurrentHarvestPlotGoldScore);
 }
 
 

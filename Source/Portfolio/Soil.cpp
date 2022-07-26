@@ -154,15 +154,14 @@ float ASoil::GetPlantGoldUpKeepCost()
 	return CurrentPlantGoldUpKeepCost;
 }
 
-bool ASoil::HasPlantInSoil()
+bool ASoil::HasAdultPlantInSoil()
 {
-	return bHasPlantInSoil;
+	return bPlantInSoilIsAdult;
 }
 
 void ASoil::SetPlantInsideIsAdult()
 {
 	bPlantInSoilIsAdult = true;
-	UE_LOG(LogTemp, Warning, TEXT("WE ARE AN ADULT NOW"));
 }
 
 bool ASoil::GetPlantInSoilIsAdult()

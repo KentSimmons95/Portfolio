@@ -2,7 +2,7 @@
 
 
 #include "PlantBase.h"
-#include "PortfolioGameModeBase.h"
+#include "Soil.h"
 
 // Sets default values
 APlantBase::APlantBase()

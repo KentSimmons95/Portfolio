@@ -58,6 +58,8 @@ public:
 	void CalcPlantingCost(float PlantCost);
 	bool EnoughGoldToPlant(float PlantCost);
 
+	void CollectHarvestPlotGoldIncome(float& CurrentHarvestPlotGoldScore);
+
 protected:
 
 private:

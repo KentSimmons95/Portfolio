@@ -58,7 +58,7 @@ public:
 	UFUNCTION()
 	float GetPlantGoldUpKeepCost();
 	UFUNCTION()
-	bool HasPlantInSoil();
+	bool HasAdultPlantInSoil();
 	//When the plant is an Adult change the flag bPlantInSoilIsAdult to true
 	UFUNCTION()
 	void SetPlantInsideIsAdult();
